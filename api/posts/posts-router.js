@@ -8,6 +8,7 @@ const router = express.Router()
 
 // start the endpoints 
 
+// #### 1 [GET] /api/posts
 router.get('/', (req, res) => {
     Post.find()
     .then(found => {
@@ -22,8 +23,24 @@ router.get('/', (req, res) => {
     })
 })
 
-router.get('/:id', (req, res) => {
-
+// #### 2 [GET] /api/posts/:id
+router.get('/:id', async (req, res) => {
+    try{
+        const post = await Post.findById(req.params.id)
+        if(!post) {
+            res.status(404).json({
+                message: "The post with the specified ID does not exist"
+            })
+        } else {
+            res.json(post)
+        }
+    } catch (err) {
+        res.status(500).json({
+            message: "The post information could not be retrieved",
+            err: err.message,
+            stack:err.stack,
+        })
+    }
 })
 
 router.post('/', (req, res) => {
